@@ -6,7 +6,8 @@ public enum CoreExceptionCode {
     MONGO_DATA_ACCESS_FAILURE("10002"),
     OPEN_AI_SERVICE_FAILURE("20001"),
     OPEN_AI_RATE_LIMITED("20002"),
-    OPEN_AI_UNAUTHORIZED("20003");
+    OPEN_AI_UNAUTHORIZED("20003"),
+    CLIENT_NOT_FOUND("30001");
 
     private final String code;
 

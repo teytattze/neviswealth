@@ -1,7 +1,11 @@
 package com.neviswealth.app.core.service;
 
 import com.neviswealth.app.core.domain.Client;
+import com.neviswealth.app.core.exception.CoreException;
+import com.neviswealth.app.core.exception.CoreExceptionCode;
 import com.neviswealth.app.core.port.inbound.CreateClientUseCasePortInput;
+import com.neviswealth.app.core.port.inbound.GetClientByIdUseCasePortInput;
+import com.neviswealth.app.core.port.outbound.ClientPersistenceGetByIdPort;
 import com.neviswealth.app.core.port.outbound.ClientPersistenceSavePort;
 import com.neviswealth.app.core.port.outbound.ClockPort;
 import com.neviswealth.app.core.port.outbound.UuidGeneratorPort;
@@ -17,26 +21,25 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
 
-    @Mock
-    private ClientPersistenceSavePort clientPersistenceSavePort;
-
-    @Mock
-    private UuidGeneratorPort uuidGeneratorPort;
-
-    @Mock
-    private ClockPort clockPort;
-
-    @InjectMocks
-    private ClientService clientService;
-
     private static final UUID GENERATED_ID = UUID.randomUUID();
     private static final Instant NOW = Instant.parse("2026-01-15T10:30:00Z");
+    @Mock
+    private ClientPersistenceSavePort clientPersistenceSavePort;
+    @Mock
+    private ClientPersistenceGetByIdPort clientPersistenceGetByIdPort;
+    @Mock
+    private UuidGeneratorPort uuidGeneratorPort;
+    @Mock
+    private ClockPort clockPort;
+    @InjectMocks
+    private ClientService clientService;
 
     @Test
     void createClient_validInput_returnsCreatedClient() {
@@ -82,5 +85,39 @@ class ClientServiceTest {
         var savedClient = captor.getValue();
         assertThat(savedClient.id()).isEqualTo(GENERATED_ID);
         assertThat(savedClient.email()).isEqualTo("john@example.com");
+    }
+
+    @Test
+    void getClientById_validInput_returnsClient() {
+        // given
+        var clientId = UUID.randomUUID();
+        var expectedClient = new Client(
+                clientId, NOW, NOW, "Jane", "Doe", "jane@example.com", "A client", List.of()
+        );
+        when(clientPersistenceGetByIdPort.getById(clientId)).thenReturn(expectedClient);
+
+        var input = new GetClientByIdUseCasePortInput(clientId);
+
+        // when
+        var result = clientService.getClientById(input);
+
+        // then
+        assertThat(result).isEqualTo(expectedClient);
+        verify(clientPersistenceGetByIdPort).getById(clientId);
+    }
+
+    @Test
+    void getClientById_notFound_throwsCoreException() {
+        // given
+        var clientId = UUID.randomUUID();
+        when(clientPersistenceGetByIdPort.getById(clientId)).thenReturn(null);
+
+        var input = new GetClientByIdUseCasePortInput(clientId);
+
+        // when / then
+        assertThatThrownBy(() -> clientService.getClientById(input))
+                .isInstanceOf(CoreException.class)
+                .satisfies(ex -> assertThat(((CoreException) ex).getCode())
+                        .isEqualTo(CoreExceptionCode.CLIENT_NOT_FOUND));
     }
 }

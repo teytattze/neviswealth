@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Search", description = "Unified search across clients and documents")
 public class SearchController {
 
-    private final SearchUseCasePort searchUseCase;
+    private final SearchUseCasePort searchUseCasePort;
     private final HttpDtoMapper<SearchResult, SearchResponse> searchResultMapper;
 
     public SearchController(
-            SearchUseCasePort searchUseCase,
+            SearchUseCasePort searchUseCasePort,
             HttpDtoMapper<SearchResult, SearchResponse> searchResultMapper
     ) {
-        this.searchUseCase = searchUseCase;
+        this.searchUseCasePort = searchUseCasePort;
         this.searchResultMapper = searchResultMapper;
     }
 
@@ -40,8 +40,8 @@ public class SearchController {
             @Parameter(description = "Search query text") @RequestParam String query,
             @Parameter(description = "Include AI-generated document summaries") @RequestParam(required = false, defaultValue = "false") boolean includeSummary
     ) {
-        var input = new SearchUseCasePortInput(query, includeSummary);
-        var result = searchUseCase.search(input);
+        var searchUseCasePortInput = new SearchUseCasePortInput(query, includeSummary);
+        var result = searchUseCasePort.search(searchUseCasePortInput);
         return searchResultMapper.fromDomain(result);
     }
 }

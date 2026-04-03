@@ -20,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Clients", description = "Client management")
 public class ClientController {
 
-    private final CreateClientUseCasePort createClientUseCase;
+    private final CreateClientUseCasePort createClientUseCasePort;
     private final HttpDtoMapper<Client, ClientResponse> clientHttpDtoMapper;
 
-    public ClientController(CreateClientUseCasePort createClientUseCase, HttpDtoMapper<Client, ClientResponse> clientHttpDtoMapper) {
-        this.createClientUseCase = createClientUseCase;
+    public ClientController(
+            CreateClientUseCasePort createClientUseCasePort,
+            HttpDtoMapper<Client, ClientResponse> clientHttpDtoMapper
+    ) {
+        this.createClientUseCasePort = createClientUseCasePort;
         this.clientHttpDtoMapper = clientHttpDtoMapper;
     }
 
@@ -35,14 +38,14 @@ public class ClientController {
     )
     @ApiResponse(responseCode = "200", description = "Client created successfully")
     ClientResponse createClient(@Valid @RequestBody CreateClientRequestBody body) {
-        var useCaseInput = new CreateClientUseCasePortInput(
+        var createClientUseCasePortInput = new CreateClientUseCasePortInput(
                 body.firstName(),
                 body.lastName(),
                 body.email(),
                 body.description(),
                 body.socialLinks()
         );
-        var client = this.createClientUseCase.createClient(useCaseInput);
+        var client = this.createClientUseCasePort.createClient(createClientUseCasePortInput);
         return this.clientHttpDtoMapper.fromDomain(client);
     }
 }

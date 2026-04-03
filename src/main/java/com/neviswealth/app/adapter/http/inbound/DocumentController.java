@@ -6,6 +6,8 @@ import com.neviswealth.app.adapter.http.inbound.mapper.HttpDtoMapper;
 import com.neviswealth.app.core.domain.Document;
 import com.neviswealth.app.core.port.inbound.CreateDocumentUseCasePort;
 import com.neviswealth.app.core.port.inbound.CreateDocumentUseCasePortInput;
+import com.neviswealth.app.core.port.inbound.GetClientByIdUseCasePort;
+import com.neviswealth.app.core.port.inbound.GetClientByIdUseCasePortInput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,11 +22,16 @@ import java.util.UUID;
 @Tag(name = "Documents", description = "Document management for clients")
 public class DocumentController {
 
-    private final CreateDocumentUseCasePort createDocumentUseCase;
+    private final CreateDocumentUseCasePort createDocumentUseCasePort;
+    private final GetClientByIdUseCasePort getClientByIdUseCasePort;
     private final HttpDtoMapper<Document, DocumentResponse> documentHttpDtoMapper;
 
-    public DocumentController(CreateDocumentUseCasePort createDocumentUseCase, HttpDtoMapper<Document, DocumentResponse> documentHttpDtoMapper) {
-        this.createDocumentUseCase = createDocumentUseCase;
+    public DocumentController(
+            CreateDocumentUseCasePort createDocumentUseCasePort,
+            GetClientByIdUseCasePort getClientByIdUseCasePort,
+            HttpDtoMapper<Document, DocumentResponse> documentHttpDtoMapper) {
+        this.createDocumentUseCasePort = createDocumentUseCasePort;
+        this.getClientByIdUseCasePort = getClientByIdUseCasePort;
         this.documentHttpDtoMapper = documentHttpDtoMapper;
     }
 
@@ -39,12 +46,15 @@ public class DocumentController {
             @PathVariable UUID clientId,
             @Valid @RequestBody CreateDocumentRequestBody body
     ) {
-        var useCaseInput = new CreateDocumentUseCasePortInput(
+        var getClientByIdUseCasePortInput = new GetClientByIdUseCasePortInput(clientId);
+        getClientByIdUseCasePort.getClientById(getClientByIdUseCasePortInput);
+
+        var createDocumentUseCasePortInput = new CreateDocumentUseCasePortInput(
                 body.title(),
                 body.content(),
                 clientId
         );
-        var document = this.createDocumentUseCase.createDocument(useCaseInput);
+        var document = this.createDocumentUseCasePort.createDocument(createDocumentUseCasePortInput);
         return this.documentHttpDtoMapper.fromDomain(document);
     }
 }

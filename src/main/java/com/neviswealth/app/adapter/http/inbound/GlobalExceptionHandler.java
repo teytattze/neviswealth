@@ -41,6 +41,7 @@ public class GlobalExceptionHandler {
         return switch (code) {
             case UNKNOWN -> HttpStatus.INTERNAL_SERVER_ERROR;
             case MONGO_DUPLICATE_KEY -> HttpStatus.CONFLICT;
+            case CLIENT_NOT_FOUND -> HttpStatus.NOT_FOUND;
             case MONGO_DATA_ACCESS_FAILURE,
                  OPEN_AI_SERVICE_FAILURE,
                  OPEN_AI_UNAUTHORIZED -> HttpStatus.BAD_GATEWAY;
