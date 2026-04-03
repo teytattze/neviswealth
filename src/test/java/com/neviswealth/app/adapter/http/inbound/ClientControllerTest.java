@@ -37,7 +37,7 @@ class ClientControllerTest {
     private static final Instant NOW = Instant.parse("2026-01-15T10:30:00Z");
 
     @Test
-    void createClient_validRequest_returns200WithClientResponse() throws Exception {
+    void createClient_validRequest_returns201WithClientResponse() throws Exception {
         // given
         var client = Client.create(CLIENT_ID, NOW, "John", "Doe", "john@example.com", "A client", List.of());
         var response = new ClientResponse(CLIENT_ID, NOW, NOW, "John", "Doe", "john@example.com", "A client", List.of());
@@ -57,7 +57,7 @@ class ClientControllerTest {
                                     "socialLinks": []
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(CLIENT_ID.toString()))
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"))

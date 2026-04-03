@@ -41,7 +41,7 @@ class DocumentControllerTest {
     private static final Instant NOW = Instant.parse("2026-01-15T10:30:00Z");
 
     @Test
-    void createDocument_validRequest_returns200WithDocumentResponse() throws Exception {
+    void createDocument_validRequest_returns201WithDocumentResponse() throws Exception {
         // given
         var document = Document.create(DOCUMENT_ID, NOW, "Title", "Content", new double[]{0.1}, CLIENT_ID);
         var response = new DocumentResponse(DOCUMENT_ID, NOW, NOW, "Title", "Content", null, CLIENT_ID);
@@ -58,7 +58,7 @@ class DocumentControllerTest {
                                     "content": "Content"
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(DOCUMENT_ID.toString()))
                 .andExpect(jsonPath("$.title").value("Title"))
                 .andExpect(jsonPath("$.content").value("Content"))

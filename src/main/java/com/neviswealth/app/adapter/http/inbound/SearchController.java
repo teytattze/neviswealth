@@ -5,9 +5,13 @@ import com.neviswealth.app.adapter.http.inbound.mapper.HttpDtoMapper;
 import com.neviswealth.app.core.domain.SearchResult;
 import com.neviswealth.app.core.port.inbound.SearchUseCasePort;
 import com.neviswealth.app.core.port.inbound.SearchUseCasePortInput;
+import com.neviswealth.app.adapter.http.inbound.dto.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +39,15 @@ public class SearchController {
             summary = "Search clients and documents",
             description = "Searches clients by name/email/description (text match) and documents by semantic similarity (vector search). Optionally includes AI-generated summaries of matched documents."
     )
-    @ApiResponse(responseCode = "200", description = "Search results returned successfully")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Search results returned successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "502", description = "Downstream service error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "503", description = "AI service temporarily unavailable",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     SearchResponse search(
             @Parameter(description = "Search query text") @RequestParam String query,
             @Parameter(description = "Include AI-generated document summaries") @RequestParam(required = false, defaultValue = "false") boolean includeSummary
