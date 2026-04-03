@@ -42,7 +42,7 @@ public class DocumentPersistenceAdapter implements DocumentPersistenceSavePort, 
     @Override
     public List<Document> searchByEmbedding(double[] embedding) {
         try {
-            Score score = Score.of(0.5);
+            Score score = Score.of(0.7);
             Vector vector = Vector.of(embedding);
             var searchResults = this.documentRepository.searchByEmbeddingNear(vector, score);
             return searchResults.map(this.documentModelMapper::toDomain).contentStream().toList();
