@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-atlas-local:latest
+    container_name: neviswealth-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGODB_INITDB_DATABASE=neviswealth
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+
+volumes:
+  mongodb_data:
