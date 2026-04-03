@@ -124,3 +124,45 @@ To also delete the database data:
 ```bash
 docker compose down -v
 ```
+
+## Example
+
+**Request:**
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8080/search?query=who%20is%20John%20doe&includeSummary=true' \
+  -H 'accept: */*'
+```
+
+**Response:**
+
+```json
+{
+  "clients": [
+    {
+      "id": "4c0085d2-cacb-477b-98b7-a820b645308d",
+      "createdAt": "2026-04-02T21:24:31.390Z",
+      "updatedAt": "2026-04-02T21:24:31.390Z",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "description": "I am the example guy",
+      "socialLinks": [
+        "https://linkedin.com/in/johndoe"
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "id": "06638b2b-248e-4063-8535-8b1b5b564826",
+      "createdAt": "2026-04-02T22:52:15.090Z",
+      "updatedAt": "2026-04-02T22:52:15.090Z",
+      "title": "The founder's family",
+      "content": "John doe is part of Tey family. He is Tat Tze's cousin and they grew up together in Malaysia.",
+      "summary": "John Doe is part of the Tey family. He is Tat Tze’s cousin, and they grew up together in Malaysia.",
+      "clientId": "4c0085d2-cacb-477b-98b7-a820b645308d"
+    }
+  ]
+}
+```
