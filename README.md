@@ -8,20 +8,8 @@ Before you begin, make sure you have the following installed on your machine:
 
 ### 1. Java 25
 
-This project requires **Java 25**. The easiest way to install and manage Java versions is with [SDKMAN](https://sdkman.io/).
-
-**Install SDKMAN** (skip if you already have it):
-
-```bash
-curl -s "https://get.sdkman.io" | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-```
-
-**Install Java 25:**
-
-```bash
-sdk install java 25-open
-```
+This project requires **Java 25**. Download and install JDK 25
+from [Oracle](https://www.oracle.com/uk/java/technologies/downloads/#java25).
 
 Verify the installation:
 
@@ -44,7 +32,8 @@ docker compose version
 
 ### 3. OpenAI API Key (optional)
 
-The app includes AI-powered features (document summarization and semantic search) that require an OpenAI API key. **The app will start without one**, but those features won't work.
+The app includes AI-powered features (document summarization and semantic search) that require an OpenAI API key. **The
+app will start without one**, but those features won't work.
 
 If you have a key, export it in your terminal:
 
@@ -52,20 +41,22 @@ If you have a key, export it in your terminal:
 export OPENAI_API_KEY=sk-your-key-here
 ```
 
-> **Note:** You do **not** need to install Gradle. The project includes a Gradle wrapper (`./gradlew`) which automatically downloads the correct Gradle version for you.
+> **Note:** You do **not** need to install Gradle. The project includes a Gradle wrapper (`./gradlew`) which
+> automatically downloads the correct Gradle version for you.
 
 ## Getting Started
 
 ### Step 1 — Clone the repository
 
 ```bash
-git clone https://github.com/teytattze/neviswealth-v2.git
-cd neviswealth-v2
+git clone https://github.com/teytattze/neviswealth.git
+cd neviswealth
 ```
 
 ### Step 2 — Start MongoDB
 
-This starts a local MongoDB instance using Docker. It automatically creates the required database and collections (`clients`, `documents`).
+This starts a local MongoDB instance using Docker. It automatically creates the required database and collections (
+`clients`, `documents`).
 
 ```bash
 docker compose up -d
@@ -87,7 +78,8 @@ This compiles the code and runs the tests:
 ./gradlew build
 ```
 
-> **First time?** The Gradle wrapper will download Gradle 9.4.1 and all project dependencies. This may take a few minutes on the first run.
+> **First time?** The Gradle wrapper will download Gradle 9.4.1 and all project dependencies. This may take a few
+> minutes on the first run.
 
 ### Step 4 — Run the application
 
@@ -109,13 +101,13 @@ You should see the Swagger UI page listing all available API endpoints.
 
 ## Useful Commands
 
-| Command | What it does |
-| --- | --- |
-| `./gradlew build` | Compile, run tests, and package |
-| `./gradlew bootRun` | Start the application |
-| `./gradlew test` | Run all tests |
-| `./gradlew test --tests "com.neviswealth.app.MainTests"` | Run a single test class |
-| `./gradlew clean build` | Delete build artifacts and rebuild from scratch |
+| Command                                                  | What it does                                    |
+|----------------------------------------------------------|-------------------------------------------------|
+| `./gradlew build`                                        | Compile, run tests, and package                 |
+| `./gradlew bootRun`                                      | Start the application                           |
+| `./gradlew test`                                         | Run all tests                                   |
+| `./gradlew test --tests "com.neviswealth.app.MainTests"` | Run a single test class                         |
+| `./gradlew clean build`                                  | Delete build artifacts and rebuild from scratch |
 
 ## Stopping Everything
 
