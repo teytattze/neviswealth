@@ -4,6 +4,7 @@ import com.neviswealth.app.adapter.http.inbound.dto.DocumentResponse;
 import com.neviswealth.app.adapter.http.inbound.mapper.HttpDtoMapper;
 import com.neviswealth.app.core.domain.Document;
 import com.neviswealth.app.core.port.inbound.CreateDocumentUseCasePort;
+import com.neviswealth.app.core.port.inbound.GetClientByIdUseCasePort;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -28,6 +29,9 @@ class DocumentControllerTest {
 
     @MockitoBean
     private CreateDocumentUseCasePort createDocumentUseCase;
+
+    @MockitoBean
+    private GetClientByIdUseCasePort getClientByIdUseCase;
 
     @MockitoBean
     private HttpDtoMapper<Document, DocumentResponse> documentHttpDtoMapper;
