@@ -1,4 +1,4 @@
-package com.neviswealth.app.core.error;
+package com.neviswealth.app.core.exception;
 
 public class CoreException extends RuntimeException {
     private final CoreExceptionCode code;

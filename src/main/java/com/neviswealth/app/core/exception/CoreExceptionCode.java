@@ -1,7 +1,12 @@
-package com.neviswealth.app.core.error;
+package com.neviswealth.app.core.exception;
 
 public enum CoreExceptionCode {
-    UNKNOWN("00000");
+    UNKNOWN("00000"),
+    MONGO_DUPLICATE_KEY("10001"),
+    MONGO_DATA_ACCESS_FAILURE("10002"),
+    OPEN_AI_SERVICE_FAILURE("20001"),
+    OPEN_AI_RATE_LIMITED("20002"),
+    OPEN_AI_UNAUTHORIZED("20003");
 
     private final String code;
 

@@ -22,22 +22,27 @@ The project follows **Hexagonal Architecture** (ports & adapters) with three dis
 
 ```
 core/                         # Inner hexagon — no framework dependencies
-├── domain/                   # Domain records (Client, Document)
-├── port/inbound/             # Use case interfaces (e.g. CreateClientUseCasePort)
-│   └── dto/                  # Use case input/output records
-└── port/outbound/            # Persistence port interfaces (e.g. ClientPersistencePort)
-
-app/service/                  # Application layer — implements inbound ports
-                              # (ClientService, DocumentService)
+├── domain/                   # Domain records (Client, Document, SearchResult)
+├── exception/                # CoreException + CoreExceptionCode enum
+├── port/inbound/             # Use case interfaces + input records
+├── port/outbound/            # Persistence, AI, and utility port interfaces
+└── service/                  # Application services — implements inbound ports
+                              # (ClientService, DocumentService, SearchService)
 
 adapter/                      # Outer hexagon — framework-specific implementations
 ├── http/inbound/             # REST controllers + request/response DTOs
-│   ├── dto/                  # HTTP-specific records (CreateClientRequestBody, ClientResponse)
+│   ├── config/               # OpenApiConfig
+│   ├── dto/                  # HTTP-specific records (CreateClientRequestBody, ClientResponse, ErrorResponse)
 │   └── mapper/               # HttpDtoMapper<TDomain, THttpDto> interface
-└── persistence/outbound/     # MongoDB persistence adapters
-    ├── model/                # MongoDB @Document models (ClientModel, DocumentModel)
-    ├── mapper/               # ModelMapper<TDomain, TModel> interface + implementations
-    └── repository/           # Spring Data MongoRepository interfaces
+├── persistence/outbound/     # MongoDB persistence adapters
+│   ├── config/               # MongoConfig, MongoIndexInitializer (vector search index)
+│   ├── model/                # MongoDB @Document models (ClientModel, DocumentModel)
+│   ├── mapper/               # ModelMapper<TDomain, TModel> interface + implementations
+│   └── repository/           # Spring Data MongoRepository interfaces
+├── ai/outbound/              # OpenAI adapters (LLM summarization, embeddings)
+│   ├── config/               # OpenAiConfig (RestClient bean)
+│   └── dto/                  # OpenAI API request/response records
+└── common/outbound/          # Utility adapters (SystemClockAdapter, RandomUuidGenerator)
 ```
 
 **Key conventions:**
@@ -46,13 +51,16 @@ adapter/                      # Outer hexagon — framework-specific implementat
 - Two mapper interfaces bridge layers: `HttpDtoMapper` (domain ↔ HTTP DTO) and `ModelMapper` (domain ↔ persistence model)
 - Persistence models are plain classes (not records) with final fields and manual getters
 - Documents are nested under clients: `POST /clients/{clientId}/documents`
-- Use case port inputs are records in `core/port/inbound/dto/`
+- Use case port inputs are records in `core/port/inbound/`
 
 ## Tech Stack
 
 - **Framework:** Spring Boot 4.0.5 (Spring WebMVC)
-- **Database:** MongoDB (Spring Data MongoDB)
+- **Database:** MongoDB (Spring Data MongoDB) with Atlas Vector Search
+- **AI:** OpenAI (embeddings via `text-embedding-3-small`, chat/summarization via `gpt-5.4-mini`)
+- **Validation:** Jakarta Validation (Bean Validation / JSR 380)
 - **HTTP Client:** Spring RestClient
 - **API Docs:** SpringDoc OpenAPI (`springdoc-openapi-starter-webmvc-ui`)
 - **Testing:** JUnit 5 via `spring-boot-starter-*-test` dependencies
 - **Build:** Gradle (Kotlin DSL), wrapper included
+- **Local Dev:** Docker Compose (MongoDB Atlas local image on port 27017)

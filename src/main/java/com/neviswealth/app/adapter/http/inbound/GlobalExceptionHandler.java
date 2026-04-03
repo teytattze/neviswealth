@@ -1,8 +1,8 @@
 package com.neviswealth.app.adapter.http.inbound;
 
 import com.neviswealth.app.adapter.http.inbound.dto.ErrorResponse;
-import com.neviswealth.app.core.error.CoreException;
-import com.neviswealth.app.core.error.CoreExceptionCode;
+import com.neviswealth.app.core.exception.CoreException;
+import com.neviswealth.app.core.exception.CoreExceptionCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
         var message = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(ErrorResponse.of(HttpStatus.UNPROCESSABLE_ENTITY.value(), message));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(ErrorResponse.of(HttpStatus.UNPROCESSABLE_CONTENT.value(), message));
     }
 
     @ExceptionHandler(Exception.class)
@@ -40,6 +40,11 @@ public class GlobalExceptionHandler {
     private HttpStatus toHttpStatus(CoreExceptionCode code) {
         return switch (code) {
             case UNKNOWN -> HttpStatus.INTERNAL_SERVER_ERROR;
+            case MONGO_DUPLICATE_KEY -> HttpStatus.CONFLICT;
+            case MONGO_DATA_ACCESS_FAILURE,
+                 OPEN_AI_SERVICE_FAILURE,
+                 OPEN_AI_UNAUTHORIZED -> HttpStatus.BAD_GATEWAY;
+            case OPEN_AI_RATE_LIMITED -> HttpStatus.SERVICE_UNAVAILABLE;
         };
     }
 }
